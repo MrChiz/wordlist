@@ -84,11 +84,14 @@ func main() {
 	var wg sync.WaitGroup
 	baseURL := "https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/main/data/"
 	list := []string{"hackerone_data.json", "bugcrowd_data.json", "intigriti_data.json", "federacy_data.json", "hackenproof_data.json", "yeswehack_data.json"}
-	wg.Add(len(list))
-	for _, name := range list {
-		go GetData(fmt.Sprintf("%s%s", baseURL, name), name, strings.Split(name, "_")[0], &wg)
+	for {
+		wg.Add(len(list))
+		for _, name := range list {
+			go GetData(fmt.Sprintf("%s%s", baseURL, name), name, strings.Split(name, "_")[0], &wg)
+		}
+		wg.Wait()
+		time.Sleep(30 * time.Minute)
 	}
-	wg.Wait()
 }
 
 func GetData(url, fileName, platform string, wg *sync.WaitGroup) {
